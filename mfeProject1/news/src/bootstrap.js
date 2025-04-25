@@ -19,10 +19,16 @@ function generateSideNews(count = 5) {
 
 // Example usage
 const sideNews = generateSideNews(10);
-console.log(JSON.stringify(sideNews, null, 2));
-
-document.getElementById('dev-news').innerHTML = sideNews.map(item => `
-    <div style="border: 1px solid #ccc; padding: 10px; margin: 10px; width: auto; height: auto; display: inline-block;">
+const divContainer = document.createElement('div');
+divContainer.id = 'news-container';
+divContainer.style.display = 'flex';
+divContainer.style.flexDirection = 'column';
+divContainer.style.justifyContent = 'space-between';
+divContainer.style.alignItems = 'center';
+divContainer.style.width = '100%';
+divContainer.style.height = 'auto';
+divContainer.innerHTML = sideNews.map(item => `
+    <div style="flex: 1;border: 1px solid #ccc; padding: 10px; margin: 10px; width: 560px; height: auto; display: inline-block;">
         <img src="${item.image}" alt="News Image" style="width: 120px; height: 80px;">
         <h2>${item.author}</h2>
         <h3>${item.headline}</h3>
@@ -32,6 +38,7 @@ document.getElementById('dev-news').innerHTML = sideNews.map(item => `
     </div>
 `).join('');
 
+
 // Add a function to handle the "Read More" button click
 function readMore(id) {
   const newsItem = sideNews.find(item => item.id === id);
@@ -39,4 +46,20 @@ function readMore(id) {
     alert(`Full details:\n\nHeadline: ${newsItem.headline}\nAuthor: ${newsItem.author}\nSummary: ${newsItem.summary}\nPublished: ${newsItem.publishDate}`);
   }
 }
-console.log(newsItems);
+
+
+const mount = el => {
+  if (el) {
+    el.appendChild(divContainer);
+  } 
+}
+
+// If you want to run this in isolation
+if (process.env.NODE_ENV === 'development') {
+  const devNews = document.getElementById('dev-news');
+  if (devNews) {
+    mount(devNews);
+  }
+}
+// We are running through container
+export { mount };

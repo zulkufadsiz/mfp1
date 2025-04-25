@@ -6,9 +6,7 @@ const ModuleFederationPlugin = webpack.container.ModuleFederationPlugin;
 module.exports = {
   mode: 'development', 
   output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),
-    publicPath: 'http://localhost:3002/', // helpful if using history API por federated modules
+    publicPath: '/', // helpful if using history API por federated modules
   },
 
   module: {
@@ -28,24 +26,27 @@ module.exports = {
   },
   resolve: { fallback: { 'process/browser': require.resolve('process/browser'), } },
   devServer: {
-    port: 3002,
+    port: 3000,
     historyApiFallback: {
-        index: 'index.html'
-    }, // helpful if using history API por federated modules
-  }, 
+      index: 'index.html'
+    }, // good for SPAs
+  },
+
   plugins: [
     new webpack.ProvidePlugin({
            process: 'process/browser',
     }),
     new HtmlWebpackPlugin({
-        template: 'public/index.html'
+        template: 'public/index.html',
         }),
     new ModuleFederationPlugin({
-      name: 'sideNews',
+      name: 'container',
       filename: 'remoteEntry.js',
-      exposes: {
-        './News': './src/bootstrap', // path to the component
+      remotes: {
+        news: 'news@http://localhost:3001/remoteEntry.js',
+        sideNews: 'sideNews@http://localhost:3002/remoteEntry.js',
       },
+      shared:[]
     }),  
 ],
 };
